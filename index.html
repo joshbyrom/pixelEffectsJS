@@ -4,10 +4,70 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <style>
+        #outline {
+            display:none;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas">
+    <input type="file" id="file" name="file" 
+           accept="image/png, image/jpeg" />
+    <br />
+
+    <canvas id="canvas" width="1024" height ="764">
         Canvas not supported, get a real browser!
     </canvas>
+
+    <br />
+
+    <div id="outline">
+        <label>Outline Color:</label>
+        <input type="color" name="color_picker" />
+        <input type="button" id="show_outline" value="Show Outline"/>
+    </div>
+
+    <script type="text/javascript" src="./js/pixelEffectsJS.js"></script>
+    <!-- Handle when a user tries to upload an image -->
+    <script>
+        var get_first_file = function (event) {
+            return event.target.files[0];
+        };
+
+        var show_outline = function () {
+            var outline = document.getElementById("outline");
+            outline.style.display = "block";
+        };
+
+        var hide_outline = function () {
+            var outline = document.getElementById("outline");
+            outline.style.display = "none";
+        };
+
+        var on_file_loaded = function (img) {
+            console.log(img);
+
+            var view = pixelEffectsJS.create_viewer(document.getElementById("canvas"));
+
+            view.prepare_canvas();
+            view.display();
+
+            show_outline();
+        };
+
+        var on_file_changed = function (event) {
+            console.log(event);
+
+            hide_outline();
+
+            var uri = event.srcElement.baseURI;
+            var img = pixelEffectsJS.load_local_image(get_first_file(event), on_file_loaded);
+        };
+
+        var on_load = function () {
+            var imageChooser = document.getElementById("file");
+            imageChooser.addEventListener("change", on_file_changed, false);
+        }.apply(this);
+    </script>
 </body>
 </html>
